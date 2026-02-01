@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -28,11 +28,19 @@ let win: BrowserWindow | null
 
 function createWindow() {
   win = new BrowserWindow({
+    width:376,
+    height:497,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    alwaysOnTop: true,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
+
+  win.setAlwaysOnTop(true, 'screen-saver')
+  win.setWindowButtonVisibility(false)
+
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
@@ -46,6 +54,24 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 }
+
+// handler for the closing button from the front
+ipcMain.on('close-window', () => {
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  if(currentWindow){
+    currentWindow.close()
+  }
+
+})
+
+// handler for the minimizing button from the front
+ipcMain.on('minimize-window', () => {
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  if(currentWindow){
+    currentWindow.minimize()
+  }
+
+})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -66,3 +92,6 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+
+

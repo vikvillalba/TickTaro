@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+
+}
+
+.bar-main {
+    height: 58px;
+    background: #E5D1F5;
+    color: #66497B;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 55%;
+
+    -webkit-app-region: drag;
+}
+
+.top-bar {
+    margin: 2%;
+}
+
+.control-button {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+}
