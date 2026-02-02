@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react"
+import alarm from './assets/alarmSound.mp3'
 
 // hook to control the timer states and info
 export const useTimer = () => {
     const [time, setTime] = useState({ h: '00', m: '00', s: '00' }) // dictionary to map the time
     const [isActive, setActive] = useState(false)
     const [isFinished, setFinished] = useState(false)
+    
+
+    // timer settings
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
         // set 2 digit limit to each one
@@ -46,8 +50,14 @@ export const useTimer = () => {
         }
     }
 
+     const audio = new Audio(alarm)
     // the actual timer
     useEffect(() => {
+        if(isFinished) {
+            audio.play()
+            setFinished(false)
+        }
+
         let interval: any = null
 
         if (isActive) {
@@ -69,6 +79,7 @@ export const useTimer = () => {
                 })
             }, 1000)
         }
+      
         return () => clearInterval(interval)
     }, [isActive, time])
 

@@ -1,7 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron'
 
 // --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
+contextBridge.exposeInMainWorld('electron', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args
     return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
@@ -19,6 +19,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     return ipcRenderer.invoke(channel, ...omit)
   },
 
+  onScreenChange: (callback: (isSecondary: boolean) => void) => {
+    ipcRenderer.on('screen-change', (_event, value) => callback(value))
+  },
+
+  resizeWindow: (width: number, height: number) => ipcRenderer.send('resize-window', width, height)
   // You can expose other APTs you need here.
   // ...
 })

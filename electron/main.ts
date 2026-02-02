@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, screen } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -38,7 +38,35 @@ function createWindow() {
     },
   })
 
-  win.setAlwaysOnTop(true, 'screen-saver')
+  ipcMain.on('resize-window', (e, width, height) => {
+    win?.setSize(width,height)
+  })
+
+  // change the app mode when it loses focus
+  const checkScreenPosition = () => {
+    if(!win) return;
+
+    const windowBounds = win.getBounds() // get screen xy
+    const currentDisplay = screen.getDisplayMatching(windowBounds) // en que pantalla está la ventana
+    const primaryDisplay = screen.getPrimaryDisplay() // get main screen
+
+    const isSecondaryScreen = currentDisplay.id !== primaryDisplay.id
+    win.webContents.send('screen-change', isSecondaryScreen)
+    
+  }
+
+  let moveTimer: NodeJS.Timeout | null = null;
+
+  const handleMove = () => {
+      if (moveTimer) clearTimeout(moveTimer);
+      moveTimer = setTimeout(() => {
+          checkScreenPosition();
+      }, 100); // Espera 100ms
+  };
+  win.on('move',handleMove)
+  win.on('focus', checkScreenPosition)
+
+  win.setAlwaysOnTop(true, 'floating')
   win.setWindowButtonVisibility(false)
 
 

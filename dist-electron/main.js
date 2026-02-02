@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, app } from "electron";
+import { ipcMain, BrowserWindow, app, screen } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -21,7 +21,27 @@ function createWindow() {
       preload: path.join(__dirname$1, "preload.mjs")
     }
   });
-  win.setAlwaysOnTop(true, "screen-saver");
+  ipcMain.on("resize-window", (e, width, height) => {
+    win == null ? void 0 : win.setSize(width, height);
+  });
+  const checkScreenPosition = () => {
+    if (!win) return;
+    const windowBounds = win.getBounds();
+    const currentDisplay = screen.getDisplayMatching(windowBounds);
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const isSecondaryScreen = currentDisplay.id !== primaryDisplay.id;
+    win.webContents.send("screen-change", isSecondaryScreen);
+  };
+  let moveTimer = null;
+  const handleMove = () => {
+    if (moveTimer) clearTimeout(moveTimer);
+    moveTimer = setTimeout(() => {
+      checkScreenPosition();
+    }, 100);
+  };
+  win.on("move", handleMove);
+  win.on("focus", checkScreenPosition);
+  win.setAlwaysOnTop(true, "floating");
   win.setWindowButtonVisibility(false);
   win.webContents.on("did-finish-load", () => {
     win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());

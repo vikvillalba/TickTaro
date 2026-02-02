@@ -3,11 +3,11 @@ import closeIcon from '../assets/close.png'
 import minIcon from '../assets/minus.png'
 
 const handleClose = () =>{
-    window.ipcRenderer.send('close-window')
+    window.electron.send('close-window')
 }
 
 const handleMinimize = () => {
-    window.ipcRenderer.send('minimize-window')
+    window.electron.send('minimize-window')
 }
 
 

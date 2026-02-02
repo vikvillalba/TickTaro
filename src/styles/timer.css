@@ -1,0 +1,23 @@
+
+.mini-overlay {
+    -webkit-app-region: drag;
+    user-select: none;
+    cursor: grab;
+
+    background: #E5D1F5;
+    color: #66497B;
+    padding: '20px';
+    height: 129px;
+}
+
+.allow-click {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+}
+
+
+.mini-overlay button,
+.mini-overlay .no-drag {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+}

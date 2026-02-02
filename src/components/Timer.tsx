@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react"
-import { timerProps } from "../App"
-import { useTimer } from "../useTimer"
+import { TimerViewProps } from "../App"
 
 
-export default function Timer({ isOverlay, setOverlay, onTimerFinish }: timerProps) {
-    const isOverlays = isOverlay
+export default function Timer({ timer }: TimerViewProps) {
+   
 
-    const { time, isActive, isFinished, startTimer, stopTimer, handleChange, handleBlur, handleFocus } = useTimer()
-
-    // notifies the app component when the timer ended
-    useEffect(() => {
-        if (isFinished) { onTimerFinish() }
-    }, [isFinished, onTimerFinish])
+    const { time, isActive, startTimer, stopTimer, handleChange, handleBlur, handleFocus } = timer
 
     // show hours only if its needed
     const showHours = parseInt(time.h) > 0
