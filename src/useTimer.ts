@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import alarm from './assets/alarmSound.mp3'
 
+const audio = new Audio(alarm)
+
 // hook to control the timer states and info
 export const useTimer = () => {
     const [time, setTime] = useState({ h: '00', m: '00', s: '00' }) // dictionary to map the time
     const [isActive, setActive] = useState(false)
     const [isFinished, setFinished] = useState(false)
-    
+
 
     // timer settings
 
@@ -50,14 +52,29 @@ export const useTimer = () => {
         }
     }
 
-     const audio = new Audio(alarm)
+
+    useEffect(() => {
+        if (isFinished) {
+            audio.loop = true;
+            audio.play().catch(e => console.log(e));
+            const stopTimeout = setTimeout(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                setFinished(false);
+            }, 10000); 
+
+            
+            return () => {
+                clearTimeout(stopTimeout);
+                audio.pause();
+                audio.currentTime = 0;
+            };
+        }
+    }, [isFinished]);
+
     // the actual timer
     useEffect(() => {
-        if(isFinished) {
-            audio.play()
-            setFinished(false)
-        }
-
+    
         let interval: any = null
 
         if (isActive) {
@@ -79,21 +96,25 @@ export const useTimer = () => {
                 })
             }, 1000)
         }
-      
+
         return () => clearInterval(interval)
     }, [isActive, time])
 
     // starts counting
-    const startTimer = () => {
+    const startTimer = (customTime? : {h:string, m:string, s:string}) => {
         handleBlur()
 
-        const h = parseInt(time.h || '0')
-        const m = parseInt(time.m || '0')
-        const s = parseInt(time.s || '0')
+        const timeToUse = customTime || time
+        const h = parseInt(timeToUse.h || '0')
+        const m = parseInt(timeToUse.m || '0')
+        const s = parseInt(timeToUse.s || '0')
 
         const total = (h * 3600) + (m * 60) + s
 
         if (total > 0) {
+            if(customTime){
+                setTime(customTime)
+            }
             setActive(true)
             setFinished(false)
         }
@@ -103,12 +124,19 @@ export const useTimer = () => {
     // stops the timer
     const stopTimer = () => {
         setActive(false)
+        setFinished(false)
+    }
+
+    const snooze = () => {
+        setFinished(false)
+        setTime({h:'00', m: '00', s: '05'}) // 5 minutes extra
+        setActive(true)
     }
 
     return {
         time, setTime,
         isActive, isFinished,
-        startTimer, stopTimer,
+        startTimer, stopTimer, snooze,
         handleChange, handleBlur, handleFocus
     }
 

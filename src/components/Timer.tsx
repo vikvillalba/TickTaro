@@ -1,8 +1,8 @@
 import { TimerViewProps } from "../App"
 
 
-export default function Timer({ timer }: TimerViewProps) {
-   
+export default function Timer({ timer, timerMode }: TimerViewProps) {
+
 
     const { time, isActive, startTimer, stopTimer, handleChange, handleBlur, handleFocus } = timer
 
@@ -14,7 +14,8 @@ export default function Timer({ timer }: TimerViewProps) {
             <div>Timer</div>
 
             <div>
-                {!isActive ? (
+               
+                {!isActive && timerMode === 'custom' ? (
                     // Editing mode
                     <div className="inputs-wrapper">
                         {showHours && (
@@ -29,7 +30,7 @@ export default function Timer({ timer }: TimerViewProps) {
 
                     </div>
 
-                ): (
+                ) : (
                     // text mode
                     <div className="text-wrapper">
                         {showHours && <span>{time.h}:</span>}
@@ -39,7 +40,7 @@ export default function Timer({ timer }: TimerViewProps) {
 
                 )}
 
-                <button onClick={isActive ? stopTimer : startTimer}>
+                <button onClick={isActive ? stopTimer : () => startTimer()}>
                     {isActive ? 'Stop' : 'Start'}</button>
             </div>
         </>

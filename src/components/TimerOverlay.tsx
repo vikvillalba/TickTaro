@@ -1,4 +1,4 @@
-import { TimeController, TimerViewProps } from "../App"
+import { TimeController } from "../App"
 import '../styles/timer.css'
 
 interface Props {
@@ -22,7 +22,7 @@ export default function TimeOverlay({ timer, onExpand }: Props) {
                 <button onClick={timer.stopTimer}>pause</button>
             </div>
             <div style={{ marginLeft: '10px' }} className="allow-click">
-                <button onClick={timer.startTimer}>continue</button>
+                <button onClick={() => timer.startTimer()}>continue</button>
             </div>
             <div>double click to change view !</div>
         </div>
