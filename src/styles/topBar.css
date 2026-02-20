@@ -10,7 +10,7 @@ body {
     display: flex;
     justify-content: left;
     align-items: center;
-    gap: 55%;
+    gap:55px;
 
     -webkit-app-region: drag;
 }
@@ -20,7 +20,14 @@ body {
     margin: 2%;
 }
 
+.bar-buttons{
+    display: flex;
+    gap:10px;
+}
 .control-button {
     -webkit-app-region: no-drag;
     cursor: pointer;
+    background-color: transparent;
+    padding-top: 4px;
+    border: 3px solid var(--border-button-color);
 }

@@ -1,9 +1,7 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -30,15 +28,17 @@ function createWindow() {
   win = new BrowserWindow({
     width:376,
     height:497,
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, 'icon.png'),
     alwaysOnTop: true,
     frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
+    resizable: false,
+    maximizable: false
   })
 
-  ipcMain.on('resize-window', (e, width, height) => {
+  ipcMain.on('resize-window', (_e, width, height) => {
     win?.setSize(width,height)
   })
 

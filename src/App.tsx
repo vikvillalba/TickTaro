@@ -90,7 +90,7 @@ function App() {
     const handleBlur = () => {
       if (isActiveRef.current) {
         setOverlay(true)
-        window.electron.resizeWindow(376, 129)
+        window.electron.resizeWindow(400, 129)
       }
     }
     /*
@@ -136,7 +136,7 @@ function App() {
       <div className='app-container'>
         {isOverlay ? (
           // mini timer 
-          <TimerOverlay timer={timeController} onExpand={handleExpand} />
+          <TimerOverlay timer={timeController} onExpand={handleExpand} animation={animations[icon]} />
         ) : (
           <>
             {view === 'menu' && (

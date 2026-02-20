@@ -1,83 +1,58 @@
-import { ipcMain, BrowserWindow, app, screen } from "electron";
-import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-createRequire(import.meta.url);
-const __dirname$1 = path.dirname(fileURLToPath(import.meta.url));
-process.env.APP_ROOT = path.join(__dirname$1, "..");
-const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
-const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
-const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
-let win;
-function createWindow() {
-  win = new BrowserWindow({
+import { ipcMain as l, BrowserWindow as s, app as i, screen as p } from "electron";
+import { fileURLToPath as R } from "node:url";
+import o from "node:path";
+const m = o.dirname(R(import.meta.url));
+process.env.APP_ROOT = o.join(m, "..");
+const a = process.env.VITE_DEV_SERVER_URL, P = o.join(process.env.APP_ROOT, "dist-electron"), w = o.join(process.env.APP_ROOT, "dist");
+process.env.VITE_PUBLIC = a ? o.join(process.env.APP_ROOT, "public") : w;
+let e;
+function f() {
+  e = new s({
     width: 376,
     height: 497,
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
-    alwaysOnTop: true,
-    frame: false,
+    icon: o.join(process.env.VITE_PUBLIC, "icon.png"),
+    alwaysOnTop: !0,
+    frame: !1,
     webPreferences: {
-      preload: path.join(__dirname$1, "preload.mjs")
-    }
+      preload: o.join(m, "preload.mjs")
+    },
+    resizable: !1,
+    maximizable: !1
+  }), l.on("resize-window", (d, r, c) => {
+    e == null || e.setSize(r, c);
   });
-  ipcMain.on("resize-window", (e, width, height) => {
-    win == null ? void 0 : win.setSize(width, height);
-  });
-  const checkScreenPosition = () => {
-    if (!win) return;
-    const windowBounds = win.getBounds();
-    const currentDisplay = screen.getDisplayMatching(windowBounds);
-    const primaryDisplay = screen.getPrimaryDisplay();
-    const isSecondaryScreen = currentDisplay.id !== primaryDisplay.id;
-    win.webContents.send("screen-change", isSecondaryScreen);
+  const n = () => {
+    if (!e) return;
+    const d = e.getBounds(), r = p.getDisplayMatching(d), c = p.getPrimaryDisplay(), _ = r.id !== c.id;
+    e.webContents.send("screen-change", _);
   };
-  let moveTimer = null;
-  const handleMove = () => {
-    if (moveTimer) clearTimeout(moveTimer);
-    moveTimer = setTimeout(() => {
-      checkScreenPosition();
+  let t = null;
+  const u = () => {
+    t && clearTimeout(t), t = setTimeout(() => {
+      n();
     }, 100);
   };
-  win.on("move", handleMove);
-  win.on("focus", checkScreenPosition);
-  win.setAlwaysOnTop(true, "floating");
-  win.setWindowButtonVisibility(false);
-  win.webContents.on("did-finish-load", () => {
-    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  });
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL);
-  } else {
-    win.loadFile(path.join(RENDERER_DIST, "index.html"));
-  }
+  e.on("move", u), e.on("focus", n), e.setAlwaysOnTop(!0, "floating"), e.setWindowButtonVisibility(!1), e.webContents.on("did-finish-load", () => {
+    e == null || e.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
+  }), a ? e.loadURL(a) : e.loadFile(o.join(w, "index.html"));
 }
-ipcMain.on("close-window", () => {
-  const currentWindow = BrowserWindow.getFocusedWindow();
-  if (currentWindow) {
-    currentWindow.close();
-  }
+l.on("close-window", () => {
+  const n = s.getFocusedWindow();
+  n && n.close();
 });
-ipcMain.on("minimize-window", () => {
-  const currentWindow = BrowserWindow.getFocusedWindow();
-  if (currentWindow) {
-    currentWindow.minimize();
-  }
+l.on("minimize-window", () => {
+  const n = s.getFocusedWindow();
+  n && n.minimize();
 });
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    win = null;
-  }
+i.on("window-all-closed", () => {
+  process.platform !== "darwin" && (i.quit(), e = null);
 });
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+i.on("activate", () => {
+  s.getAllWindows().length === 0 && f();
 });
-app.whenReady().then(createWindow);
+i.whenReady().then(f);
 export {
-  MAIN_DIST,
-  RENDERER_DIST,
-  VITE_DEV_SERVER_URL
+  P as MAIN_DIST,
+  w as RENDERER_DIST,
+  a as VITE_DEV_SERVER_URL
 };

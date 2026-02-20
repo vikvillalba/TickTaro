@@ -61,7 +61,7 @@ export const useTimer = () => {
                 audio.pause();
                 audio.currentTime = 0;
                 setFinished(false);
-            }, 10000); 
+            }, 20000); 
 
             
             return () => {

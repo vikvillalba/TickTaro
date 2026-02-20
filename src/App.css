@@ -1,3 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 #root {
+    --baby-lilac-color: #E5D1F5;
+    --text-color: #66497B;
+    --border-color: #AC9AD0;
+    --border-button-color:#8F7DB2;
+}
 
+.app-container{
+    background-color: var(--baby-lilac-color);
+    font-family: "Pixelify Sans", sans-serif;
+    height: 439px;
+   width: 100vw;
+    margin-top: 0;
+     overflow: hidden;
 }
